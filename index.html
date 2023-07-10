@@ -1,0 +1,70 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+    <script
+      async=""
+      src="https://ga.jspm.io/npm:es-module-shims@1.7.1/dist/es-module-shims.js"
+    ></script>
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://cdn.jsdelivr.net/npm/three@^0.154.0/build/three.module.min.js"
+        }
+      }
+    </script>
+
+    <script
+      type="module"
+      src=" https://cdn.jsdelivr.net/npm/@google/model-viewer@3.1.1/dist/model-viewer.min.js"
+    ></script>
+
+    <script
+      type="module"
+      src=" https://cdn.jsdelivr.net/npm/@beilinson/model-viewer-effects@1.0.0/dist/model-viewer-effects.min.js"
+    ></script>
+  </head>
+  <body>
+    <!-- Use the <effect-composer> component inside the <model-viewer> element -->
+    <model-viewer
+      camera-orbit="45deg 115deg auto"
+      camera-controls
+      touch-action="pan-y"
+      autoplay
+      src="./model.glb"
+      ar
+      alt="A 3D model of a Rocket Ship"
+    >
+      <effect-composer id="selectiveComposer" render-mode="quality">
+        <selective-bloom-effect
+          strength="5"
+          radius="0.7"
+          threshold="0"
+        ></selective-bloom-effect>
+        <color-grade-effect></color-grade-effect>
+      </effect-composer>
+    </model-viewer>
+    <script type="module">
+      const selectiveComposer = document.querySelector(
+        "effect-composer#selectiveComposer"
+      );
+      const selectiveBloom = selectiveComposer.querySelector(
+        "selective-bloom-effect"
+      );
+
+      selectiveComposer.addEventListener("updated-selection", () => {
+        const selection = [];
+        selectiveComposer.selection.forEach(
+          (obj) =>
+            (obj.material.emissive.r > 0 ||
+              obj.material.emissive.g > 0 ||
+              obj.material.emissive.b > 0) &&
+            selection.push(obj)
+        );
+        selectiveBloom.selection = selection;
+      });
+    </script>
+  </body>
+</html>
